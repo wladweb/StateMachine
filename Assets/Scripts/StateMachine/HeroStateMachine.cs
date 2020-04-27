@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Hero))]
 public class HeroStateMachine : MonoBehaviour
 {
     [SerializeField] private State _initialState;
@@ -17,7 +18,13 @@ public class HeroStateMachine : MonoBehaviour
 
     private void Update()
     {
-        
+        if (_currentState == null)
+            return;
+
+        State nextState = _currentState.GetNextState();
+
+        if (nextState != null)
+            Transit(nextState);
     }
 
     private void Reset()
@@ -28,5 +35,16 @@ public class HeroStateMachine : MonoBehaviour
         {
             _currentState.Enter(_target);
         }
+    }
+
+    private void Transit(State nextState)
+    {
+        if (_currentState != null)
+            _currentState.Exit();
+
+        _currentState = nextState;
+
+        if (_currentState != null)
+            _currentState.Enter(_target);
     }
 }
